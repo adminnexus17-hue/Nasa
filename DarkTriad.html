@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Device Info</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f5f5f5;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+            transition: all 0.5s ease;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 30px 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.5s ease;
+        }
+
+        .icon-device {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+
+        .title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 30px;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            margin: 8px 0;
+            background: #f9f9f9;
+            border-radius: 10px;
+            text-align: left;
+        }
+
+        .info-icon {
+            font-size: 20px;
+            margin-right: 12px;
+        }
+
+        .info-text {
+            flex: 1;
+        }
+
+        .info-label {
+            font-size: 11px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .btn-cek {
+            width: 100%;
+            padding: 14px;
+            background: #4a90d9;
+            color: #ffffff;
+            border: none;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 25px;
+            margin-top: 20px;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-cek:active {
+            background: #357abd;
+            transform: scale(0.98);
+        }
+
+        .btn-cek:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .loader {
+            display: none;
+            margin: 20px auto;
+            width: 35px;
+            height: 35px;
+            border: 3px solid #e0e0e0;
+            border-top: 3px solid #4a90d9;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ========== MODE HACKER ========== */
+        body.hacker-mode {
+            background: #000000 !important;
+            color: #ff0000 !important;
+        }
+
+        body.hacker-mode .container {
+            background: #0a0a0a !important;
+            border: 1px solid #ff0000 !important;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.3) !important;
+        }
+
+        body.hacker-mode .title {
+            color: #ff0000 !important;
+        }
+
+        body.hacker-mode .subtitle {
+            color: #ff4444 !important;
+        }
+
+        body.hacker-mode .info-row {
+            background: rgba(255, 0, 0, 0.05) !important;
+            border: 1px solid rgba(255, 0, 0, 0.2) !important;
+        }
+
+        body.hacker-mode .info-label {
+            color: #ff6666 !important;
+        }
+
+        body.hacker-mode .info-value {
+            color: #ffffff !important;
+        }
+
+        body.hacker-mode .btn-cek {
+            background: rgba(255, 0, 0, 0.1) !important;
+            color: #ff0000 !important;
+            border: 1px solid #ff0000 !important;
+        }
+
+        body.hacker-mode .loader {
+            border-color: rgba(255, 0, 0, 0.2) !important;
+            border-top-color: #ff0000 !important;
+        }
+
+        .log-box {
+            display: none;
+            text-align: left;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            color: #ff4444;
+            background: rgba(255, 0, 0, 0.05);
+            border-left: 2px solid #ff0000;
+            padding: 10px;
+            margin-top: 15px;
+            border-radius: 3px;
+            line-height: 1.8;
+        }
+
+        body.hacker-mode .log-box {
+            display: block;
+        }
+
+        .result-box {
+            display: none;
+            background: rgba(255, 0, 0, 0.05);
+            border: 2px solid #ff0000;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            text-align: left;
+        }
+
+        body.hacker-mode .result-box.show {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-title {
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 12px;
+            color: #ff0000;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            animation: blink 0.5s infinite;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0.3; }
+        }
+
+        .result-row {
+            font-size: 12px;
+            margin: 8px 0;
+            padding: 6px;
+            border-bottom: 1px dashed rgba(255, 0, 0, 0.3);
+            font-family: 'Courier New', monospace;
+        }
+
+        .result-label {
+            color: #ff6666;
+            display: inline-block;
+            width: 90px;
+        }
+
+        .result-value {
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        .prank-msg {
+            text-align: center;
+            font-size: 13px;
+            color: #ff0000;
+            margin-top: 12px;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            animation: blink 0.5s infinite;
+            border-top: 1px solid #ff0000;
+            padding-top: 10px;
+        }
+
+        .data-leak {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #ff0000;
+            border-radius: 5px;
+            font-size: 10px;
+            color: #ff4444;
+            text-align: left;
+            font-family: 'Courier New', monospace;
+        }
+
+        body.hacker-mode .data-leak.show {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        .data-leak-item {
+            margin: 4px 0;
+        }
+
+        .leak-icon {
+            margin-right: 5px;
+        }
+
+        .countdown-box {
+            display: none;
+            background: rgba(255, 0, 0, 0.1);
+            border: 2px solid #ff0000;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 12px;
+            text-align: center;
+        }
+
+        body.hacker-mode .countdown-box.show {
+            display: block;
+            animation: pulseBox 0.5s infinite;
+        }
+
+        @keyframes pulseBox {
+            0% { box-shadow: 0 0 15px rgba(255,0,0,0.3); }
+            50% { box-shadow: 0 0 40px rgba(255,0,0,0.7); }
+            100% { box-shadow: 0 0 15px rgba(255,0,0,0.3); }
+        }
+
+        .countdown-label {
+            color: #ff0000;
+            font-size: 13px;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            animation: blink 0.5s infinite;
+            margin-bottom: 8px;
+        }
+
+        .countdown-timer {
+            font-size: 50px;
+            color: #ff0000;
+            font-weight: bold;
+            text-shadow: 0 0 20px #ff0000;
+            font-family: 'Courier New', monospace;
+            animation: timerZoom 0.5s infinite;
+        }
+
+        @keyframes timerZoom {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .reset-warning {
+            color: #ff0000;
+            font-size: 12px;
+            margin-top: 8px;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            animation: blink 0.3s infinite;
+        }
+
+        .btn-maps {
+            width: 100%;
+            padding: 10px;
+            background: rgba(255, 0, 0, 0.1);
+            color: #ff0000;
+            border: 1px solid #ff0000;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            margin-top: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .error-msg {
+            display: none;
+            color: #ff0000;
+            text-align: center;
+            margin-top: 15px;
+            font-size: 13px;
+            border: 1px solid #ff0000;
+            padding: 10px;
+            border-radius: 5px;
+            background: rgba(255, 0, 0, 0.05);
+            font-family: 'Courier New', monospace;
+        }
+
+        body.hacker-mode .error-msg.show {
+            display: block;
+        }
+
+        /* Mobile fullscreen */
+        @media (max-width: 480px) {
+            .container {
+                margin: 10px;
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="mainContainer">
+        <div class="icon-device">📱</div>
+        <div class="title">Informasi Perangkat</div>
+        <div class="subtitle" id="subtitle">Cek status & spesifikasi device Anda</div>
+
+        <div class="info-row">
+            <span class="info-icon">📡</span>
+            <div class="info-text">
+                <div class="info-label">Jaringan</div>
+                <div class="info-value" id="infoJaringan">Tersambung</div>
+            </div>
+        </div>
+
+        <div class="info-row">
+            <span class="info-icon">🔋</span>
+            <div class="info-text">
+                <div class="info-label">Baterai</div>
+                <div class="info-value" id="infoBaterai">Sehat (85%)</div>
+            </div>
+        </div>
+
+        <div class="info-row">
+            <span class="info-icon">💾</span>
+            <div class="info-text">
+                <div class="info-label">Penyimpanan</div>
+                <div class="info-value" id="infoStorage">64 GB / 128 GB</div>
+            </div>
+        </div>
+
+        <button class="btn-cek" id="btnCek" onclick="startScan()">
+            🔍 CEK STATUS
+        </button>
+
+        <div class="loader" id="loader"></div>
+
+        <div class="log-box" id="logBox"></div>
+
+        <div class="data-leak" id="dataLeak">
+            <div class="data-leak-item"><span class="leak-icon">📸</span> Galeri: 1.247 file terakses...</div>
+            <div class="data-leak-item"><span class="leak-icon">💬</span> WhatsApp: 3.892 chat terunduh...</div>
+            <div class="data-leak-item"><span class="leak-icon">📱</span> Kontak: 256 nomor tersalin...</div>
+            <div class="data-leak-item"><span class="leak-icon">🔑</span> Password: ********** terenkripsi...</div>
+        </div>
+
+        <div class="result-box" id="resultBox">
+            <div class="result-title">⚠️ TARGET TERDETEKSI ⚠️</div>
+            <div class="result-row">
+                <span class="result-label">🏴 Negara</span>
+                <span class="result-value" id="negara">-</span>
+            </div>
+            <div class="result-row">
+                <span class="result-label">🏛 Provinsi</span>
+                <span class="result-value" id="provinsi">-</span>
+            </div>
+            <div class="result-row">
+                <span class="result-label">🏙 Kabupaten</span>
+                <span class="result-value" id="kabupaten">-</span>
+            </div>
+            <div class="result-row">
+                <span class="result-label">🏡 Desa/Kel.</span>
+                <span class="result-value" id="desa">-</span>
+            </div>
+            <div class="result-row">
+                <span class="result-label">📍 Koordinat</span>
+                <span class="result-value" id="koordinat">-</span>
+            </div>
+            <div class="prank-msg">😈 WKWKWKWK DATA LU MULAI DARI FOTO, WA, APLIKASI, GW UDAH TAU SEMUA!</div>
+            <button class="btn-maps" onclick="bukaMaps()">🗺 BUKA DI GOOGLE MAPS</button>
+        </div>
+
+        <div class="countdown-box" id="countdownBox">
+            <div class="countdown-label">⚠️ TUNGGU HINGGA SELESAI ⚠️</div>
+            <div class="countdown-timer" id="countdownTimer">01:00</div>
+            <div class="reset-warning">💀 HP ANDA AKAN DI-RESET!</div>
+        </div>
+
+        <div class="error-msg" id="errorMsg">
+            ❌ GPS tidak aktif! Pastikan lokasi sudah menyala.
+        </div>
+    </div>
+
+    <script>
+        let currentLat = 0;
+        let currentLon = 0;
+        let countdownSeconds = 60;
+        let countdownInterval = null;
+        let isHacked = false;
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        async function startScan() {
+            const btn = document.getElementById('btnCek');
+            const loader = document.getElementById('loader');
+            const body = document.body;
+            const logBox = document.getElementById('logBox');
+            const subtitle = document.getElementById('subtitle');
+
+            if (isHacked) return;
+
+            body.classList.add('hacker-mode');
+            isHacked = true;
+
+            btn.disabled = true;
+            btn.textContent = '⏳ MEMINDAI...';
+            loader.style.display = 'block';
+            logBox.innerHTML = '';
+            subtitle.textContent = 'Memindai sistem...';
+
+            // Getar pakai Vibration API (browser support)
+            if (navigator.vibrate) navigator.vibrate(200);
+
+            const logs = [
+                '> Memindai jaringan...',
+                '> Mengakses data perangkat...',
+                '> Root akses diperoleh!',
+                '> Menyalin WhatsApp... [██████████] 100%',
+                '> Menyalin galeri... [██████████] 100%',
+                '> Menyalin kontak... [██████████] 100%',
+                '> Mengakses kamera...',
+                '> DATA TERKUMPUL! ☠️'
+            ];
+
+            for (let i = 0; i < logs.length; i++) {
+                await sleep(600);
+                logBox.innerHTML += logs[i] + '<br>';
+                if (i === 6 && navigator.vibrate) navigator.vibrate(400);
+            }
+
+            document.getElementById('dataLeak').classList.add('show');
+            if (navigator.vibrate) navigator.vibrate(300);
+
+            await sleep(800);
+            btn.textContent = '📍 Mencari lokasi...';
+            subtitle.textContent = 'Melacak GPS...';
+            getLocation();
+        }
+
+        function getLocation() {
+            if (!navigator.geolocation) {
+                showError();
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                position => {
+                    currentLat = position.coords.latitude;
+                    currentLon = position.coords.longitude;
+                    getAddress(currentLat, currentLon);
+                },
+                error => { showError(); }, {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                }
+            );
+        }
+
+        async function getAddress(lat, lon) {
+            try {
+                const url =
+                    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1&accept-language=id`;
+                const response = await fetch(url, {
+                    headers: { 'User-Agent': 'DeviceInfo/1.0' }
+                });
+                const data = await response.json();
+                showResult(data, lat, lon);
+            } catch (err) {
+                showResult(null, lat, lon);
+            }
+        }
+
+        function showResult(data, lat, lon) {
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('btnCek').textContent = '[√] TERLACAK!';
+            document.getElementById('subtitle').textContent = 'Menghitung mundur...';
+
+            let negara = '-',
+                provinsi = '-',
+                kabupaten = '-',
+                desa = '-';
+
+            if (data && data.address) {
+                const addr = data.address;
+                negara = addr.country || '-';
+                provinsi = addr.state || addr.province || addr.region || '-';
+                kabupaten = addr.county || addr.city || addr.town || addr.municipality || '-';
+                desa = addr.village || addr.suburb || addr.hamlet || addr.neighbourhood || addr.residential || '-';
+            }
+
+            document.getElementById('negara').textContent = negara;
+            document.getElementById('provinsi').textContent = provinsi;
+            document.getElementById('kabupaten').textContent = kabupaten;
+            document.getElementById('desa').textContent = desa;
+            document.getElementById('koordinat').textContent = lat.toFixed(6) + ', ' + lon.toFixed(6);
+
+            document.getElementById('resultBox').classList.add('show');
+            document.getElementById('resultBox').scrollIntoView({ behavior: 'smooth' });
+
+            if (navigator.vibrate) navigator.vibrate(800);
+
+            setTimeout(startCountdown, 2000);
+        }
+
+        function startCountdown() {
+            const box = document.getElementById('countdownBox');
+            box.classList.add('show');
+            box.scrollIntoView({ behavior: 'smooth' });
+
+            countdownSeconds = 60;
+            updateTimerDisplay();
+
+            countdownInterval = setInterval(() => {
+                countdownSeconds--;
+                updateTimerDisplay();
+                if (navigator.vibrate) navigator.vibrate(50);
+
+                if (countdownSeconds <= 30 && countdownSeconds > 0) {
+                    document.body.style.animation = 'shake 0.1s infinite';
+                }
+
+                if (countdownSeconds <= 0) {
+                    clearInterval(countdownInterval);
+                    document.getElementById('countdownTimer').textContent = '00:00';
+                    document.body.style.animation = 'none';
+
+                    alert('⚠️ SYSTEM FAILED!\n\n' +
+                        'WKWKWKWK DATA LU MULAI DARI FOTO, WA, APLIKASI, GW UDAH TAU SEMUA!\n\n' +
+                        '📍 LOKASI: ' + document.getElementById('koordinat').textContent + '\n' +
+                        '📸 FOTO: 1.247 FILE\n' +
+                        '💬 WHATSAPP: 3.892 CHAT\n' +
+                        '📱 KONTAK: 256 NOMOR\n\n' +
+                        '😈 SEMUA DATA SUDAH TERSIMPAN!\n' +
+                        '🔴 HP AKAN MATI...');
+
+                    if (navigator.vibrate) navigator.vibrate(2000);
+
+                    setTimeout(() => {
+                        window.close();
+                    }, 3000);
+                }
+
+                if (countdownSeconds % 10 === 0 && navigator.vibrate) {
+                    navigator.vibrate(500);
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const m = Math.floor(countdownSeconds / 60);
+            const s = countdownSeconds % 60;
+            document.getElementById('countdownTimer').textContent =
+                String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+
+            if (countdownSeconds <= 10) {
+                document.getElementById('countdownTimer').style.fontSize = '60px';
+            }
+        }
+
+        function showError() {
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('btnCek').disabled = false;
+            document.getElementById('btnCek').textContent = '🔍 CEK STATUS';
+            document.getElementById('errorMsg').classList.add('show');
+        }
+
+        function bukaMaps() {
+            if (currentLat && currentLon) {
+                window.open(`https://maps.google.com/maps?q=${currentLat},${currentLon}`, '_blank');
+            }
+        }
+
+        // Style shake
+        const shakeStyle = document.createElement('style');
+        shakeStyle.textContent = `
+            @keyframes shake {
+                0% { transform: translate(0); }
+                25% { transform: translate(-2px, 2px); }
+                50% { transform: translate(2px, -2px); }
+                75% { transform: translate(-2px, -2px); }
+                100% { transform: translate(2px, 2px); }
+            }
+        `;
+        document.head.appendChild(shakeStyle);
+    </script>
+
+</body>
+</html>
